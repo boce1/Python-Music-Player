@@ -29,6 +29,8 @@ def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     draw_slide_bar(window, SLIDE_BAR_Y, SLIDE_BAR_HEIGHT)
     for button in buttons:
         button.draw(win, mouse_position, mouse_pressed)
+    play_button.draw_sign(window)
+
     pygame.display.update()
 
 def scroll(event, bar_y, speed):

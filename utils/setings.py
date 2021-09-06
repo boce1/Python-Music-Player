@@ -1,3 +1,5 @@
+import pygame
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (86, 209, 48)
@@ -22,7 +24,11 @@ SCROLL_SPEED = font_size * 2
 
 GAP = 20
 
-PLAY_BUTTON_SIZE = 80
+play_image = pygame.image.load(".\\images\\play.png")
+pause_image = pygame.image.load(".\\images\\pause.png")
+
+PLAY_BUTTON_SIZE = play_image.get_width()
+#PLAY_BUTTON_SIZE = 80
 PLAY_BUTTON_X = WIDTH // 2 - PLAY_BUTTON_SIZE // 2
 PLAY_BUTTON_Y = toolbar_button_y_position(PLAY_BUTTON_SIZE)
 

@@ -81,7 +81,13 @@ class Play_button(Button):
             else:
                 pygame.mixer.music.pause()
             pause = not pause
-                
+
+    def draw_sign(self, win):
+        if pause:
+            win.blit(play_image, (PLAY_BUTTON_X, PLAY_BUTTON_Y))
+        else:
+            win.blit(pause_image, (PLAY_BUTTON_X, PLAY_BUTTON_Y))           
+
 class Replay_button(Button):
     def replay(self, mouse_pos, event):
         global pause
