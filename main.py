@@ -40,15 +40,16 @@ def scroll(event, bar_y, speed):
     return 0
 
 def scroll_songs(songs):
-    for song in songs:
-        if song.y <= song.prev_y:
-            song.y += scroll(event, SLIDE_BAR_Y, SCROLL_SPEED)
+    if len(list_of_files) > songs_on_screen:
+        for song in songs:
+            if song.y <= song.prev_y:
+                song.y += scroll(event, SLIDE_BAR_Y, SCROLL_SPEED)
 
-        if song.y > song.prev_y:
-            song.y = song.prev_y
+            if song.y > song.prev_y:
+                song.y = song.prev_y
 
-        if song.y < song.next_y:
-            song.y = song.next_y
+            if song.y < song.next_y:
+                song.y = song.next_y
 
 clock = pygame.time.Clock()
 run = True
