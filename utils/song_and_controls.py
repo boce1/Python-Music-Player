@@ -98,6 +98,8 @@ class Replay_button(Button):
                 pygame.mixer.music.unpause()
             pygame.mixer.music.rewind()
 
+    def draw_sign(self, win):
+        win.blit(replay_button_image, (REPLAY_BUTTON_X, REPLAY_BUTTON_Y))
 
 class Mute_button(Button):
     def mute(self, mouse_pos, event):
