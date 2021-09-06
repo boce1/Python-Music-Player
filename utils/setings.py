@@ -26,13 +26,15 @@ GAP = 20
 
 play_image = pygame.image.load(".\\images\\play.png")
 pause_image = pygame.image.load(".\\images\\pause.png")
+mute_button_on_image = pygame.image.load(".\\images\\mute_on.png")
+mute_button_off_image = pygame.image.load(".\\images\\mute_off.png")
 
 PLAY_BUTTON_SIZE = play_image.get_width()
 #PLAY_BUTTON_SIZE = 80
 PLAY_BUTTON_X = WIDTH // 2 - PLAY_BUTTON_SIZE // 2
 PLAY_BUTTON_Y = toolbar_button_y_position(PLAY_BUTTON_SIZE)
 
-MUTE_BUTTON_SIZE = 50
+MUTE_BUTTON_SIZE = mute_button_on_image.get_width()
 MUTE_BUTTON_X = GAP
 MUTE_BUTTON_Y = toolbar_button_y_position(MUTE_BUTTON_SIZE)
 

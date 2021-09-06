@@ -30,6 +30,7 @@ def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     for button in buttons:
         button.draw(win, mouse_position, mouse_pressed)
     play_button.draw_sign(window)
+    mute_button.draw_sign(window)
 
     pygame.display.update()
 

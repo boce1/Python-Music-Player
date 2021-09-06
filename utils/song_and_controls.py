@@ -7,6 +7,7 @@ pygame.font.init()
 font = pygame.font.SysFont("Consolas", font_size)
 
 pause = False
+is_muted = False
 song_index = 0
 class Song:
     songs_num = 0
@@ -98,7 +99,6 @@ class Replay_button(Button):
             pygame.mixer.music.rewind()
 
 
-is_muted = False
 class Mute_button(Button):
     def mute(self, mouse_pos, event):
         global is_muted
@@ -109,6 +109,11 @@ class Mute_button(Button):
                 pygame.mixer.music.set_volume(0.0)
             is_muted = not is_muted
 
+    def draw_sign(self, win):
+        if is_muted:
+            win.blit(mute_button_on_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
+        else:
+            win.blit(mute_button_off_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
 
 songs = []
 for i in range(len(list_of_files)):
