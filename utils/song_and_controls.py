@@ -92,11 +92,12 @@ class Play_button(Button):
 class Replay_button(Button):
     def replay(self, mouse_pos, event):
         global pause
-        if self.is_ready(mouse_pos, event):
-            if not pygame.mixer.music.get_busy():
-                pause = not pause
-                pygame.mixer.music.unpause()
-            pygame.mixer.music.rewind()
+        if pygame.mixer.music.get_busy() or pause:
+            if self.is_ready(mouse_pos, event):
+                if not pygame.mixer.music.get_busy():
+                    pause = not pause
+                    pygame.mixer.music.unpause()
+                pygame.mixer.music.rewind()
 
     def draw_sign(self, win):
         win.blit(replay_button_image, (REPLAY_BUTTON_X, REPLAY_BUTTON_Y))
@@ -122,6 +123,9 @@ for i in range(len(list_of_files)):
     songs.append(Song(list_of_files[i], i * font_size + 1, i))
     Song.songs_num += 1
 
-songs_on_screen = (HEIGHT - SLIDE_BAR_HEIGHT - CONTROL_BAR_HEIGHT) // songs[0].height
-for song in songs:
-    song.next_y = song.prev_y - (Song.songs_num - songs_on_screen) * song.height
+try:
+    songs_on_screen = (HEIGHT - SLIDE_BAR_HEIGHT - CONTROL_BAR_HEIGHT) // songs[0].height
+    for song in songs:
+        song.next_y = song.prev_y - (Song.songs_num - songs_on_screen) * song.height
+except IndexError:
+    songs_on_screen = 0

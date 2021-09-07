@@ -13,6 +13,10 @@ mute_button = Mute_button(MUTE_BUTTON_X, MUTE_BUTTON_Y, MUTE_BUTTON_SIZE)
 
 toolbar_buttons = (play_button, replay_button, mute_button)
 
+def if_songs_empty(song_list):
+    empty_list_message = font.render(f"Location {path} is empty.", True, GREEN)
+    window.blit(empty_list_message, (WIDTH // 2 - empty_list_message.get_width() // 2, 20))    
+
 def draw_control_bar(win, y, height):
     pygame.draw.rect(win, GRAY, (0, y, WIDTH, height))
     pygame.draw.rect(win, GREEN, (0, y, WIDTH, height), 1)
@@ -23,8 +27,11 @@ def draw_slide_bar(win, y, height):
 
 def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     win.fill(BLACK)
-    for song in songs:
-        song.draw(win, mouse_position, mouse_pressed)
+    if songs_on_screen > 0:
+        for song in songs:
+            song.draw(win, mouse_position, mouse_pressed)
+    else:
+        if_songs_empty(songs)
     draw_control_bar(window, CONTROL_BAR_Y, CONTROL_BAR_HEIGHT)
     draw_slide_bar(window, SLIDE_BAR_Y, SLIDE_BAR_HEIGHT)
     for button in buttons:
@@ -50,6 +57,8 @@ def scroll_songs(songs):
 
             if song.y < song.next_y:
                 song.y = song.next_y
+
+
 
 clock = pygame.time.Clock()
 run = True
