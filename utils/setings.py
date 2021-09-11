@@ -15,6 +15,8 @@ CONTROL_BAR_Y = HEIGHT - CONTROL_BAR_HEIGHT
 
 font_size = 20
 
+SONG_BOX_SIZE = font_size
+
 FPS = 60
 
 def toolbar_button_y_position(size):
@@ -29,6 +31,8 @@ pause_image = pygame.image.load(".\\images\\pause.png")
 mute_button_on_image = pygame.image.load(".\\images\\mute_on.png")
 mute_button_off_image = pygame.image.load(".\\images\\mute_off.png")
 replay_button_image = pygame.image.load(".\\images\\replay.png")
+loop_button_on_image = pygame.image.load(".\\images\\loop_on.png")
+loop_button_off_image = pygame.image.load(".\\images\\loop_off.png")
 
 PLAY_BUTTON_SIZE = play_image.get_width()
 #PLAY_BUTTON_SIZE = 80
@@ -41,8 +45,12 @@ MUTE_BUTTON_Y = toolbar_button_y_position(MUTE_BUTTON_SIZE)
 
 REPLAY_BUTTON_SIZE = replay_button_image.get_width()
 #REPLAY_BUTTON_X = MUTE_BUTTON_X + MUTE_BUTTON_SIZE + GAP
-REPLAY_BUTTON_X = PLAY_BUTTON_X - PLAY_BUTTON_SIZE - GAP
+REPLAY_BUTTON_X = PLAY_BUTTON_X  - GAP - REPLAY_BUTTON_SIZE
 REPLAY_BUTTON_Y = toolbar_button_y_position(REPLAY_BUTTON_SIZE)
+
+LOOP_BUTTON_SIZE = loop_button_on_image.get_width()
+LOOP_BUTTON_X = REPLAY_BUTTON_X - GAP - LOOP_BUTTON_SIZE
+LOOP_BUTTON_Y = toolbar_button_y_position(LOOP_BUTTON_SIZE)
 
 SONGS_X = 5
 

@@ -9,9 +9,9 @@ root.withdraw()
 play_button = Play_button(PLAY_BUTTON_X, PLAY_BUTTON_Y, PLAY_BUTTON_SIZE)
 replay_button = Replay_button(REPLAY_BUTTON_X, REPLAY_BUTTON_Y, REPLAY_BUTTON_SIZE)
 mute_button = Mute_button(MUTE_BUTTON_X, MUTE_BUTTON_Y, MUTE_BUTTON_SIZE)
+loop_button = Loop_button(LOOP_BUTTON_X, LOOP_BUTTON_Y, LOOP_BUTTON_SIZE)
 
-
-toolbar_buttons = (play_button, replay_button, mute_button)
+toolbar_buttons = (play_button, replay_button, mute_button, loop_button)
 
 def if_songs_empty(song_list):
     empty_list_message = font.render(f"Location {path} is empty.", True, GREEN)
@@ -25,6 +25,7 @@ def draw_slide_bar(win, y, height):
     pygame.draw.rect(win, GRAY, (0, y, WIDTH, height))
     pygame.draw.rect(win, GREEN, (0, y, WIDTH, height), 1)
 
+
 def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     win.fill(BLACK)
     if songs_on_screen > 0:
@@ -34,9 +35,11 @@ def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
         if_songs_empty(songs)
     draw_control_bar(window, CONTROL_BAR_Y, CONTROL_BAR_HEIGHT)
     draw_slide_bar(window, SLIDE_BAR_Y, SLIDE_BAR_HEIGHT)
+    draw_playing_song(window)
     for button in buttons:
         button.draw(win, mouse_position, mouse_pressed)
         button.draw_sign(window)
+    #loop_button.draw(win, mouse_position, mouse_pressed)
     
 
     pygame.display.update()
@@ -59,7 +62,6 @@ def scroll_songs(songs):
                 song.y = song.next_y
 
 
-
 clock = pygame.time.Clock()
 run = True
 while run:
@@ -74,9 +76,11 @@ while run:
         play_button.play(mouse_position, event)
         replay_button.replay(mouse_position, event)
         mute_button.mute(mouse_position, event)
+        loop_button.loop(mouse_position, event, list_of_files)
 
         for song in songs:
             song.play(mouse_position, event, songs)
-
+        #print(pygame.mixer.music.get_busy())
         scroll_songs(songs)
+        #print(f"{SONG_END}  :  {loop}")
 pygame.quit()

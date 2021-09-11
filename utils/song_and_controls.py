@@ -6,6 +6,9 @@ pygame.mixer.init()
 pygame.font.init()
 font = pygame.font.SysFont("Consolas", font_size)
 
+SONG_END = pygame.USEREVENT + 1
+pygame.mixer.music.set_endevent(SONG_END)
+loop = False
 pause = False
 is_muted = False
 song_index = 0
@@ -66,12 +69,18 @@ class Song:
 
     def play(self, mouse_pos, event, song_list):
         if self.is_chosen(mouse_pos, event):
-            global pause
+            global pause, song_index
             pause = False
+            if not loop:
+                song_index = self.index
+            else:
+                song_index = self.index - 1
             pygame.mixer.music.stop()
             pygame.mixer.music.load(f"{path}\\{self.name}")
             pygame.mixer.music.play()
 
+def draw_playing_song(win):
+    pygame.draw.rect(win, GREEN, (-10, song_index * SONG_BOX_SIZE, WIDTH + 10, SONG_BOX_SIZE), 2)
 
 class Play_button(Button):
     def play(self, mouse_pos, event):
@@ -97,7 +106,8 @@ class Replay_button(Button):
                 if not pygame.mixer.music.get_busy():
                     pause = not pause
                     pygame.mixer.music.unpause()
-                pygame.mixer.music.rewind()
+                pygame.mixer.music.set_pos(0.0)
+                #pygame.mixer.music.rewind()
 
     def draw_sign(self, win):
         win.blit(replay_button_image, (REPLAY_BUTTON_X, REPLAY_BUTTON_Y))
@@ -118,9 +128,31 @@ class Mute_button(Button):
         else:
             win.blit(mute_button_off_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
 
+class Loop_button(Button):
+    def loop(self, mouse_pos, event, song_list):
+        global loop, song_index
+        
+        if self.is_ready(mouse_pos, event):
+            loop = not loop
+        if loop:
+            if event.type == SONG_END:
+                print('song has ended')
+                if not (song_index >= len(song_list) - 1):
+                    song_index += 1 
+                else:
+                    song_index = 0
+                pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+                pygame.mixer.music.play()
+
+    def draw_sign(self, win):
+        if loop:
+            win.blit(loop_button_on_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y))
+        else:
+            win.blit(loop_button_off_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y)) 
+
 songs = []
 for i in range(len(list_of_files)):
-    songs.append(Song(list_of_files[i], i * font_size + 1, i))
+    songs.append(Song(list_of_files[i], i * SONG_BOX_SIZE + 1, i))
     Song.songs_num += 1
 
 try:
