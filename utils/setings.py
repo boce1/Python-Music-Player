@@ -33,6 +33,8 @@ mute_button_off_image = pygame.image.load(".\\images\\mute_off.png")
 replay_button_image = pygame.image.load(".\\images\\replay.png")
 loop_button_on_image = pygame.image.load(".\\images\\loop_on.png")
 loop_button_off_image = pygame.image.load(".\\images\\loop_off.png")
+forwad_button_image = pygame.image.load(".\\images\\forward.png")
+backward_button_image = pygame.image.load(".\\images\\backward.png")
 
 PLAY_BUTTON_SIZE = play_image.get_width()
 #PLAY_BUTTON_SIZE = 80
@@ -51,6 +53,14 @@ REPLAY_BUTTON_Y = toolbar_button_y_position(REPLAY_BUTTON_SIZE)
 LOOP_BUTTON_SIZE = loop_button_on_image.get_width()
 LOOP_BUTTON_X = REPLAY_BUTTON_X - GAP - LOOP_BUTTON_SIZE
 LOOP_BUTTON_Y = toolbar_button_y_position(LOOP_BUTTON_SIZE)
+
+BACKWARD_BUTTON_SIZE = backward_button_image.get_width()
+BACKWARD_BUTTON_X = PLAY_BUTTON_X + PLAY_BUTTON_SIZE + GAP
+BACKWARD_BUTTON_Y = toolbar_button_y_position(BACKWARD_BUTTON_SIZE)
+
+FORWARD_BUTTON_SIZE = forwad_button_image.get_width()
+FORWARD_BUTTON_X = BACKWARD_BUTTON_X + BACKWARD_BUTTON_SIZE + GAP
+FORWARD_BUTTON_Y = toolbar_button_y_position(FORWARD_BUTTON_SIZE)
 
 SONGS_X = 5
 

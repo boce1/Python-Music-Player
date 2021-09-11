@@ -12,6 +12,8 @@ loop = False
 pause = False
 is_muted = False
 song_index = 0
+start = True
+
 class Song:
     songs_num = 0
     def __init__(self, name, y, index):
@@ -25,6 +27,7 @@ class Song:
         self.height = self.message.get_height() 
         self.x = 0
         self.left = True
+        
 
     def is_mouse_pointing(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -69,15 +72,20 @@ class Song:
 
     def play(self, mouse_pos, event, song_list):
         if self.is_chosen(mouse_pos, event):
-            global pause, song_index
+            global pause, song_index, start
             pause = False
-            if not loop:
+            if not loop or start:
                 song_index = self.index
+                
             else:
                 song_index = self.index - 1
+
+            if start: # if is it start and loop is True then index will be index - 1 
+                start = False # after start keep of the program songs_index = self.index - 1
             pygame.mixer.music.stop()
             pygame.mixer.music.load(f"{path}\\{self.name}")
             pygame.mixer.music.play()
+            #print(f"{song_index}")
 
 def draw_playing_song(win):
     pygame.draw.rect(win, GREEN, (-10, song_index * SONG_BOX_SIZE, WIDTH + 10, SONG_BOX_SIZE), 2)
@@ -90,7 +98,9 @@ class Play_button(Button):
                 pygame.mixer.music.unpause()
             else:
                 pygame.mixer.music.pause()
-            pause = not pause
+
+            if not start:
+                pause = not pause
 
     def draw_sign(self, win):
         if pause:
@@ -131,12 +141,13 @@ class Mute_button(Button):
 class Loop_button(Button):
     def loop(self, mouse_pos, event, song_list):
         global loop, song_index
-        
         if self.is_ready(mouse_pos, event):
             loop = not loop
+            #print(f"{song_index}:::{loop}")
+
         if loop:
             if event.type == SONG_END:
-                print('song has ended')
+                #print('song has ended')
                 if not (song_index >= len(song_list) - 1):
                     song_index += 1 
                 else:
@@ -149,6 +160,43 @@ class Loop_button(Button):
             win.blit(loop_button_on_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y))
         else:
             win.blit(loop_button_off_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y)) 
+
+class Forward_button(Button):
+    def forward(self, mouse_pos, event, song_list):
+        global song_index, pause, start
+        if self.is_ready(mouse_pos, event):
+            song_index += 1
+            if song_index >= len(song_list):
+                song_index = 0
+            #if not loop:
+            if not pygame.mixer.music.get_busy() and pause:
+                pause = not pause
+            start = False
+            pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+            pygame.mixer.music.play()
+
+    def draw_sign(self, win):
+        win.blit(forwad_button_image, (FORWARD_BUTTON_X, FORWARD_BUTTON_Y))
+
+class Backward_button(Button):
+    def backward(self, mouse_pos, event, song_list):
+        if self.is_ready(mouse_pos, event):
+            global song_index, pause, start
+            if self.is_ready(mouse_pos, event):
+                song_index -= 1
+                if song_index <= 0:
+                    song_index = len(song_list) - 1
+                #if not loop:
+                if not pygame.mixer.music.get_busy() and pause:
+                    pause = not pause
+                start = False
+                pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+                pygame.mixer.music.play()
+
+
+    def draw_sign(self, win):
+        win.blit(backward_button_image, (BACKWARD_BUTTON_X, BACKWARD_BUTTON_Y))
+
 
 songs = []
 for i in range(len(list_of_files)):
