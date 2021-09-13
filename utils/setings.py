@@ -8,7 +8,7 @@ GRAY = (50, 50, 50)
 LIGHT_GRAY = (180,180, 180)
 
 WIDTH = 1000
-HEIGHT = 800
+HEIGHT = 740
 
 CONTROL_BAR_HEIGHT = 100
 CONTROL_BAR_Y = HEIGHT - CONTROL_BAR_HEIGHT
@@ -35,6 +35,7 @@ loop_button_on_image = pygame.image.load(".\\images\\loop_on.png")
 loop_button_off_image = pygame.image.load(".\\images\\loop_off.png")
 forwad_button_image = pygame.image.load(".\\images\\forward.png")
 backward_button_image = pygame.image.load(".\\images\\backward.png")
+save_button_image = pygame.image.load(".\\images\\save.png")
 
 PLAY_BUTTON_SIZE = play_image.get_width()
 #PLAY_BUTTON_SIZE = 80
@@ -44,6 +45,10 @@ PLAY_BUTTON_Y = toolbar_button_y_position(PLAY_BUTTON_SIZE)
 MUTE_BUTTON_SIZE = mute_button_on_image.get_width()
 MUTE_BUTTON_X = GAP
 MUTE_BUTTON_Y = toolbar_button_y_position(MUTE_BUTTON_SIZE)
+
+SAVE_BUTTON_SIZE = save_button_image.get_width()
+SAVE_BUTTON_X = MUTE_BUTTON_X + MUTE_BUTTON_SIZE + GAP
+SAVE_BUTTON_Y = toolbar_button_y_position(SAVE_BUTTON_SIZE)
 
 REPLAY_BUTTON_SIZE = replay_button_image.get_width()
 #REPLAY_BUTTON_X = MUTE_BUTTON_X + MUTE_BUTTON_SIZE + GAP

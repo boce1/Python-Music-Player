@@ -31,5 +31,12 @@ class Button:
                 return True
         return False
 
+    def is_relised(self, mouse_pos, event):
+        mouse_x, mouse_y = mouse_pos
+        if self.x <= mouse_x <= self.x + self.width and \
+            self.y <= mouse_y <= self.y + self.width: 
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                return True
+        return False
 #class Forward
 
