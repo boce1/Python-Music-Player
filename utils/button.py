@@ -38,5 +38,3 @@ class Button:
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 return True
         return False
-#class Forward
-

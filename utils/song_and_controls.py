@@ -18,6 +18,7 @@ is_muted = False
 song_index = 0
 start = True
 is_replayed = False
+is_song_skipped = False
 
 passed_seconds = 0
 
@@ -161,10 +162,9 @@ class Mute_button(Button):
 
 class Loop_button(Button):
     def loop(self, mouse_pos, event, song_list):
-        global loop, song_index
+        global loop, song_index, passed_seconds
         if self.is_ready(mouse_pos, event):
             loop = not loop
-            #print(f"{song_index}:::{loop}")
 
         if loop:
             if event.type == SONG_END:
@@ -174,8 +174,10 @@ class Loop_button(Button):
                 else:
                     song_index = 0
                 pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+                passed_seconds = 0
                 pygame.mixer.music.play()
 
+    
     def draw_sign(self, win):
         if loop:
             win.blit(loop_button_on_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y))
@@ -184,7 +186,7 @@ class Loop_button(Button):
 
 class Forward_button(Button):
     def forward(self, mouse_pos, event, song_list):
-        global song_index, pause, start
+        global song_index, pause, start, is_song_skipped 
         if self.is_ready(mouse_pos, event):
             song_index += 1
             if song_index >= len(song_list):
@@ -193,16 +195,19 @@ class Forward_button(Button):
             if not pygame.mixer.music.get_busy() and pause:
                 pause = not pause
             start = False
+            is_song_skipped = True
             pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
             pygame.mixer.music.play()
+        if self.is_relised(mouse_pos, event):
+            is_song_skipped = False
 
     def draw_sign(self, win):
         win.blit(forwad_button_image, (FORWARD_BUTTON_X, FORWARD_BUTTON_Y))
 
 class Backward_button(Button):
     def backward(self, mouse_pos, event, song_list):
+        global song_index, pause, start, is_song_skipped
         if self.is_ready(mouse_pos, event):
-            global song_index, pause, start
             if self.is_ready(mouse_pos, event):
                 song_index -= 1
                 if song_index <= 0:
@@ -211,19 +216,26 @@ class Backward_button(Button):
                 if not pygame.mixer.music.get_busy() and pause:
                     pause = not pause
                 start = False
+                is_song_skipped = True
                 pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
                 pygame.mixer.music.play()
-
+        if self.is_relised(mouse_pos, event):
+            is_song_skipped = False
 
     def draw_sign(self, win):
         win.blit(backward_button_image, (BACKWARD_BUTTON_X, BACKWARD_BUTTON_Y))
 
 class Directory_button(Button):
     def chose_directory(self, mouse_pos, event):
+        global pause 
         if self.is_ready(mouse_pos, event):
+            pygame.mixer.music.pause()
+            pause = True
             path = askdirectory()
             make_default_path(path)
             messagebox.showinfo("Music Player", "You need to restart the program if you want to play songs in the chosen location.")
+            
+
     def draw_sign(self, win):
         win.blit(save_button_image, (SAVE_BUTTON_X, SAVE_BUTTON_Y))
 
@@ -236,10 +248,13 @@ class Progress_bar:
     circle_x = x
     circle_radious = 5
     temp_x = 0
+    passed_seconds = 0
 
     def duration(self):
-        audio = MP3(f"{path}\\{list_of_files[song_index]}")
-        return audio.info.length
+        if song_index > 0:
+            audio = MP3(f"{path}\\{list_of_files[song_index]}")
+            return audio.info.length
+        return 1
 
     def is_relised(self, mouse_pos, event):
         mouse_x, mouse_y = mouse_pos
@@ -249,44 +264,32 @@ class Progress_bar:
                 return True
         return False
 
-    '''def find_circle_possition(self):
-                    if is_replayed:
-                        pygame.mixer.music.load(f"{path}\\{list_of_files[song_index]}")
-                        pygame.mixer.music.play()
-                    passed_seconds = pygame.mixer.music.get_pos() / 1000
-                    Progress_bar.circle_x = Progress_bar.x + Progress_bar.width * passed_seconds / self.duration()'''
-    def find_circle_possition(self, event):
+    def change_time(self, mouse_pos, event):
         global passed_seconds
-        if not pause:
-            passed_seconds += 1 / FPS 
-        Progress_bar.circle_x = Progress_bar.x + Progress_bar.width * passed_seconds / self.duration()
-        #if event.type == SONG_END or is_replayed:
-        if is_replayed:
-            passed_seconds = 0
-
-    def set_circle_possition(self, mouse_pos, event):
         if self.is_relised(mouse_pos, event):
-            pygame.mixer.music.set_pos(Progress_bar.width / Progress_bar.circle_x)
-            #skipped_seconds = (Progress_bar.width / Progress_bar.circle_x) * self.duration()
-            skipped_seconds = 100
-            passed_seconds = pygame.mixer.music.get_pos() / 1000 + skipped_seconds
-            Progress_bar.circle_x = Progress_bar.x + Progress_bar.width * passed_seconds / self.duration()
+            x = mouse_pos[0]
+            if x > Progress_bar.circle_x:
+                passed_seconds += ((x - Progress_bar.circle_x) / (Progress_bar.x + Progress_bar.width)) * self.duration()
+            else:
+                passed_seconds -= ((Progress_bar.circle_x - x) / (Progress_bar.x + Progress_bar.width)) * self.duration()
+            pygame.mixer.music.set_pos(passed_seconds)
 
     def draw(self, win):
-        pygame.draw.line(win, BLACK, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 3)
-        pygame.draw.line(win, WHITE, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 1)
+        global passed_seconds
+        if not pause:
+            passed_seconds += 1 / FPS
+        if is_replayed or is_song_skipped:
+            passed_seconds = 0
+
+
+        Progress_bar.circle_x = Progress_bar.x + Progress_bar.width * passed_seconds / self.duration()
+        #print(f"{passed_seconds} : {self.duration()}")
+        pygame.draw.line(win, WHITE, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 3)
+        pygame.draw.line(win, BLACK, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 1)
         if pygame.mixer.music.get_pos() < 0 or Progress_bar.circle_x >= Progress_bar.x + Progress_bar.width:
             Progress_bar.circle_x = Progress_bar.x
-        
-        #else:
-        #    Progress_bar.temp_x = self.find_circle_possition()
-        #    Progress_bar.circle_x = Progress_bar.temp_x
-            #self.find_circle_possition()
-        pygame.draw.circle(win, GREEN, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious)
-        pygame.draw.circle(win, WHITE, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious, 3)
-        pygame.draw.circle(win, BLACK, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious, 1)
-        #print(f"{self.duration()} ::: {pygame.mixer.music.get_pos()}")
-        
+        pygame.draw.circle(win, DARK_GREEN, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious)
+        pygame.draw.circle(win, GREEN, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious, 1)
 
 songs = []
 for i in range(len(list_of_files)):

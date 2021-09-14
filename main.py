@@ -91,9 +91,5 @@ while run:
             song.play(mouse_position, event, songs)
         #print(pygame.mixer.music.get_busy())
         scroll_songs(songs)
-        #print(f"{SONG_END}  :  {loop}")
-        #progress_bar.find_circle_possition(mouse_position, event)
-        #progress_bar.set_circle_possition(mouse_position, event)
-    progress_bar.find_circle_possition(event)
-
+        progress_bar.change_time(mouse_position, event)
 pygame.quit()
