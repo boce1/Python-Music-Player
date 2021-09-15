@@ -4,12 +4,6 @@ def make_default_path(new_path):
 	file = open("utils\\_path_\\default_path.txt", "w")
 	file.write(new_path)
 
-'''
-user_name = os.getlogin()
-path = f"C:\\Users\\{user_name}\\Music"
-file = open("utils\\_path_\\default_path.txt", "w")
-file.write(path)
-'''
 file = open("utils\\_path_\\default_path.txt", "r")
 path = file.read()
 

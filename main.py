@@ -16,6 +16,8 @@ toolbar_buttons = (play_button, replay_button, mute_button, loop_button, backwar
 
 progress_bar = Progress_bar()
 
+volume_bar = Volume_bar()
+
 def if_songs_empty(song_list):
     y = 1
     text = f"Location is empty or doesn't exist."
@@ -46,8 +48,9 @@ def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     for button in buttons:
         button.draw(win, mouse_position, mouse_pressed)
         button.draw_sign(window)
-    
+    volume_bar.draw(win)
     draw_slide_bar(window, SLIDE_BAR_Y, SLIDE_BAR_HEIGHT)
+    progress_bar.draw_x(win, mouse_position, mouse_pressed)
     pygame.display.update()
 
 def scroll(event, bar_y, speed):
@@ -75,6 +78,7 @@ while run:
     mouse_position = pygame.mouse.get_pos()
     mouse_buttons = pygame.mouse.get_pressed()
     main_draw(window, mouse_position, mouse_buttons)
+    volume_bar.change_volume(mouse_position, mouse_buttons)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -91,5 +95,6 @@ while run:
             song.play(mouse_position, event, songs)
         #print(pygame.mixer.music.get_busy())
         scroll_songs(songs)
+        #volume_bar.change_volume(mouse_position, event)
         progress_bar.change_time(mouse_position, event)
 pygame.quit()

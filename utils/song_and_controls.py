@@ -20,6 +20,7 @@ song_index = 0
 start = True
 is_replayed = False
 is_song_skipped = False
+volume = 1.0
 
 passed_seconds = 0
 
@@ -106,12 +107,12 @@ def mark_playing_song(win):
             pygame.draw.rect(win, WHITE, (song.x, song.y, song.width + 2 * SONGS_X, song.height), 1)
 
 def is_song_index_bigger_than_0():
-    return song_index >= 0
+    return len(list_of_files) > 0
 
 class Play_button(Button):
     def play(self, mouse_pos, event):
         global pause
-        if self.is_ready(mouse_pos, event):
+        if self.is_ready(mouse_pos, event) or (event.type == pygame.KEYDOWN or event.type == pygame.K_SPACE):
             if pause:
                 pygame.mixer.music.unpause()
             else:
@@ -147,16 +148,19 @@ class Replay_button(Button):
 
 class Mute_button(Button):
     def mute(self, mouse_pos, event):
-        global is_muted
+        global is_muted, volume
         if self.is_ready(mouse_pos, event):
             if is_muted:
-                pygame.mixer.music.set_volume(1.0)
+                pygame.mixer.music.set_volume(volume)
             else:
+                volume = pygame.mixer.music.get_volume() 
                 pygame.mixer.music.set_volume(0.0)
             is_muted = not is_muted
+        if volume != pygame.mixer.music.get_volume():
+            is_muted = False
 
     def draw_sign(self, win):
-        if is_muted:
+        if is_muted or pygame.mixer.music.get_volume() == 0:
             win.blit(mute_button_on_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
         else:
             win.blit(mute_button_off_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
@@ -266,13 +270,24 @@ class Progress_bar:
             return audio.info.length
         return 1
 
-    def is_relised(self, mouse_pos, event):
+    def is_mouse_pointing(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
         if Progress_bar.x <= mouse_x <= Progress_bar.x + Progress_bar.width and \
-            Progress_bar.y <= mouse_y <= Progress_bar.y + Progress_bar.height: 
+            Progress_bar.y <= mouse_y <= Progress_bar.y + Progress_bar.height:
+            return True
+        return False 
+
+    def is_relised(self, mouse_pos, event):
+        if self.is_mouse_pointing(mouse_pos):
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 return True
         return False
+
+    def draw_x(self, win, mouse_pos, mouse_button):
+        if pygame.mixer.music.get_busy():
+            if self.is_mouse_pointing(mouse_pos):
+                if mouse_button[0]:
+                    pygame.draw.circle(win, WHITE, (mouse_pos[0], Progress_bar.line_y), Progress_bar.circle_radious)
 
     def change_time(self, mouse_pos, event):
         global passed_seconds
