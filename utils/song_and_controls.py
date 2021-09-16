@@ -21,6 +21,7 @@ start = True
 is_replayed = False
 is_song_skipped = False
 volume = 1.0
+temp_volume = volume
 
 passed_seconds = 0
 
@@ -148,19 +149,24 @@ class Replay_button(Button):
 
 class Mute_button(Button):
     def mute(self, mouse_pos, event):
-        global is_muted, volume
+        global is_muted, volume, temp_volume
         if self.is_ready(mouse_pos, event):
+            volume = pygame.mixer.music.get_volume()
+            if volume > 0.0: 
+                temp_volume = volume
             if is_muted:
-                pygame.mixer.music.set_volume(volume)
+                pygame.mixer.music.set_volume(temp_volume)
+
             else:
-                volume = pygame.mixer.music.get_volume() 
                 pygame.mixer.music.set_volume(0.0)
-            is_muted = not is_muted
-        if volume != pygame.mixer.music.get_volume():
+
+        if pygame.mixer.music.get_volume() == 0.0:
+            is_muted = True
+        else:
             is_muted = False
 
     def draw_sign(self, win):
-        if is_muted or pygame.mixer.music.get_volume() == 0:
+        if pygame.mixer.music.get_volume() == 0:
             win.blit(mute_button_on_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))
         else:
             win.blit(mute_button_off_image, (MUTE_BUTTON_X, MUTE_BUTTON_Y))

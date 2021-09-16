@@ -27,7 +27,6 @@ class Volume_bar:
             pygame.mixer.music.set_volume(self.volume)
 
     def draw(self, win):
-        #pygame.draw.rect(win, BLACK, (self.x, self.y, self.width, self.height), 2)
         line_width = 3
         points = ((self.x, self.y + self.height), (self.x + self.width, self.y + self.height), (self.x + self.width, self.y))
         pygame.draw.polygon(win, WHITE, points)
@@ -35,4 +34,6 @@ class Volume_bar:
         if self.volume > 0:
             pygame.draw.line(win, GREEN, (self.volume_x, self.y + (self.height - self.height * self.volume)), (self.volume_x, self.y + self.height), line_width)
             pygame.draw.line(win, DARK_GREEN, (self.volume_x, self.y + (self.height - self.height * self.volume)), (self.volume_x, self.y + self.height), 1)
+        if pygame.mixer.music.get_volume() == 0.0:
+            pygame.draw.polygon(win, WHITE, points)    
         pygame.draw.polygon(win, BLACK, points, 1)
