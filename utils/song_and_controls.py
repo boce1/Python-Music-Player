@@ -30,6 +30,7 @@ root.withdraw()
 
 class Song:
     songs_num = 0
+    is_song_playing = False
     def __init__(self, name, y, index):
         self.name = name
         self.y = y
@@ -99,7 +100,9 @@ class Song:
             pygame.mixer.music.stop()
             pygame.mixer.music.load(f"{path}\\{self.name}")
             pygame.mixer.music.play()
-
+            Song.is_song_playing = True
+        if event.type == SONG_END:
+            Song.is_song_playing = False
 
 def mark_playing_song(win):
     if 0 < len(songs) and songs[song_index].y < SLIDE_BAR_Y:
@@ -304,7 +307,7 @@ class Progress_bar:
                 passed_seconds += (x - Progress_bar.circle_x) / width * self.duration()
             else:
                 passed_seconds -= (Progress_bar.circle_x - x) / width * self.duration()
-            if pygame.mixer.music.get_busy():
+            if Song.is_song_playing:
                 pygame.mixer.music.set_pos(passed_seconds)
 
     def draw(self, win):
