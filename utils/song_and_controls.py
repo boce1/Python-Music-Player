@@ -290,7 +290,7 @@ class Progress_bar:
         return False
 
     def draw_x(self, win, mouse_pos, mouse_button):
-        if pygame.mixer.music.get_busy():
+        if Progress_bar.circle_x != Progress_bar.x:
             if self.is_mouse_pointing(mouse_pos):
                 if mouse_button[0]:
                     pygame.draw.circle(win, WHITE, (mouse_pos[0], Progress_bar.line_y), Progress_bar.circle_radious)
