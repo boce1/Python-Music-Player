@@ -14,6 +14,8 @@ font = pygame.font.SysFont("Consolas", font_size)
 SONG_END = pygame.USEREVENT + 1
 pygame.mixer.music.set_endevent(SONG_END)
 loop = False
+loop_index = 0
+loop_types = ("loop off", "loop", "loop one")
 pause = False
 is_muted = False
 song_index = 0
@@ -104,7 +106,7 @@ class Song:
 def mark_playing_song(win):
     if 0 < len(songs) and songs[song_index].y < SLIDE_BAR_Y:
         song = songs[song_index]
-        if not loop:
+        if loop_types[loop_index] == "loop off":
             pygame.draw.rect(win, WHITE, (song.x, song.y, song.width + 2 * SONGS_X, song.height), 1)
 
 def is_song_index_bigger_than_0():
@@ -113,7 +115,7 @@ def is_song_index_bigger_than_0():
 class Play_button(Button):
     def play(self, mouse_pos, event):
         global pause
-        if self.is_ready(mouse_pos, event) or (event.type == pygame.KEYDOWN or event.type == pygame.K_SPACE):
+        if self.is_ready(mouse_pos, event) or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
             if pause:
                 pygame.mixer.music.unpause()
             else:
@@ -173,25 +175,42 @@ class Mute_button(Button):
 
 
 class Loop_button(Button):
-    def loop(self, mouse_pos, event, song_list):
-        global loop, song_index, passed_seconds
-        if self.is_ready(mouse_pos, event):
-            loop = not loop
+    def song_ended(self, event):
+        return event.type == SONG_END
 
-        if loop:
-            if event.type == SONG_END:
+    def play_song_q(self, song_list):
+        global passed_seconds
+        pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+        passed_seconds = 0
+        pygame.mixer.music.play()
+
+    def loop(self, mouse_pos, event, song_list):
+        #global loop, song_index, passed_seconds
+        global loop_index, song_index#, passed_seconds
+        if self.is_ready(mouse_pos, event):
+            #loop = not loop
+            loop_index += 1
+            if loop_index >= len(loop_types):
+                loop_index = 0
+
+        if loop_types[loop_index] == "loop":
+            if self.song_ended(event):
                 if not (song_index >= len(song_list) - 1):
                     song_index += 1 
                 else:
                     song_index = 0
 
-                pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
-                passed_seconds = 0
-                pygame.mixer.music.play()
+                self.play_song_q(song_list)            
+
+        if loop_types[loop_index] == "loop one":
+            if self.song_ended(event):
+                self.play_song_q(song_list)            
 
     def draw_sign(self, win):
-        if loop:
+        if loop_types[loop_index] == "loop":
             win.blit(loop_button_on_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y))
+        elif loop_types[loop_index] == "loop one":
+            win.blit(loop_one_button_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y))
         else:
             win.blit(loop_button_off_image, (LOOP_BUTTON_X, LOOP_BUTTON_Y)) 
 

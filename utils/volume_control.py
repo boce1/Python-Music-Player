@@ -1,3 +1,4 @@
+from pygame.constants import BLEND_ALPHA_SDL2
 from utils.setings import VOLUME_BAR_X, VOLUME_BAR_Y, VOLUME_BAR_WIDTH, VOLUME_BAR_HEIGHT, BLACK, DARK_GREEN, GREEN, WHITE, WIDTH
 import pygame
 
@@ -32,8 +33,9 @@ class Volume_bar:
         pygame.draw.polygon(win, WHITE, points)
         
         if self.volume > 0:
-            pygame.draw.line(win, GREEN, (self.volume_x, self.y + (self.height - self.height * self.volume)), (self.volume_x, self.y + self.height), line_width)
-            pygame.draw.line(win, DARK_GREEN, (self.volume_x, self.y + (self.height - self.height * self.volume)), (self.volume_x, self.y + self.height), 1)
+            points2 = ((self.x, self.y + self.height), (self.volume_x, self.y + (self.height - self.height * self.volume)),  (self.volume_x, self.y + self.height))
+            pygame.draw.polygon(win, GREEN, points2)
+            pygame.draw.polygon(win, BLACK, points2, 1)  
         if pygame.mixer.music.get_volume() == 0.0:
             pygame.draw.polygon(win, WHITE, points)    
         pygame.draw.polygon(win, BLACK, points, 1)

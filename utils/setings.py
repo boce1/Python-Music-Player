@@ -7,7 +7,7 @@ DARK_GREEN = (0, 36, 5)
 GRAY = (50, 50, 50)
 LIGHT_GRAY = (180,180, 180)
 
-WIDTH = 1000
+WIDTH = 1200
 HEIGHT = 740
 
 CONTROL_BAR_HEIGHT = 100
@@ -36,6 +36,7 @@ loop_button_off_image = pygame.image.load(".\\images\\loop_off.png")
 forwad_button_image = pygame.image.load(".\\images\\forward.png")
 backward_button_image = pygame.image.load(".\\images\\backward.png")
 save_button_image = pygame.image.load(".\\images\\save.png")
+loop_one_button_image = pygame.image.load(".\\images\\loop_one.png")
 
 PLAY_BUTTON_SIZE = play_image.get_width()
 #PLAY_BUTTON_SIZE = 80
