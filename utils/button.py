@@ -38,3 +38,6 @@ class Button:
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 return True
         return False
+
+    def is_key_pressed(self, event, key):
+        return event.type == pygame.KEYDOWN and event.key == key
