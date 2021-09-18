@@ -32,8 +32,8 @@ def draw_control_bar(win, y, height):
     pygame.draw.rect(win, GREEN, (0, y, WIDTH, height), 1)
 
 def draw_slide_bar(win, y, height):
-    pygame.draw.rect(win, GRAY, (0, y, WIDTH, height))
-    pygame.draw.rect(win, GREEN, (0, y, WIDTH, height), 1)
+    pygame.draw.rect(win, WHITE, (0, y, WIDTH, height))
+    #pygame.draw.rect(win, DARK_GREEN, (0, y, WIDTH, height), 1)
     progress_bar.draw(win)
 
 def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
@@ -51,6 +51,7 @@ def main_draw(win, mouse_position, mouse_pressed, buttons = toolbar_buttons):
     volume_bar.draw(win)
     draw_slide_bar(window, SLIDE_BAR_Y, SLIDE_BAR_HEIGHT)
     progress_bar.draw_x(win, mouse_position, mouse_pressed)
+    show_playing_song(win)
     pygame.display.update()
 
 def scroll(event, bar_y, speed):
