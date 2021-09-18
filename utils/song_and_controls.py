@@ -6,7 +6,6 @@ from tkinter import Tk
 from tkinter import messagebox
 from tkinter.filedialog import askdirectory
 from mutagen.mp3 import MP3
-import math
 
 pygame.mixer.init()
 pygame.font.init()
@@ -33,6 +32,7 @@ root.withdraw()
 
 class Song:
     songs_num = 0
+    is_playing = False
     def __init__(self, name, y, index):
         self.name = name
         self.y = y
@@ -102,6 +102,9 @@ class Song:
             pygame.mixer.music.stop()
             pygame.mixer.music.load(f"{path}\\{self.name}")
             pygame.mixer.music.play()
+            Song.is_playing = True
+        if event.type == SONG_END:
+            Song.is_playing = False
 
 
 def mark_playing_song(win):
@@ -134,7 +137,7 @@ def show_playing_song(win):
             if playing_song_x_ >= SONGS_X:
                 playing_song_left = True
     else:
-        start_text = font.render("Chose a song", True, BLACK)
+        start_text = font.render("No song is playing", True, BLACK)
         win.blit(start_text, (WIDTH // 2 - start_text.get_width() // 2, SONG_PLALYING_TEXT + 1))
 
 class Play_button(Button):
@@ -167,7 +170,7 @@ class Replay_button(Button):
             if is_song_index_bigger_than_0():
                 pygame.mixer.music.load(f"{path}\\{list_of_files[song_index]}")
                 pygame.mixer.music.play()
-
+            Song.is_playing = True
         if self.is_relised(mouse_pos, event):
             is_replayed = False 
 
@@ -229,7 +232,9 @@ class Loop_button(Button):
 
         if loop_types[loop_index] == "loop one":
             if self.song_ended(event):
-                self.play_song_q(song_list)            
+                self.play_song_q(song_list)
+
+        Song.is_playing = True            
 
     def draw_sign(self, win):
         if loop_types[loop_index] == "loop":
@@ -306,13 +311,13 @@ class Directory_button(Button):
 
 
 class Progress_bar:
-    x = 20
+    x = SONGS_X
     y = SLIDE_BAR_Y
     width = WIDTH - 2 * x
     height = SLIDE_BAR_HEIGHT
     line_y = y + height // 2
     circle_x = x
-    circle_radious = 2 * SONGS_X - 2
+    circle_radious = SONGS_X
 
     def duration(self):
         if is_song_index_bigger_than_0():
@@ -347,9 +352,9 @@ class Progress_bar:
             width = Progress_bar.x + Progress_bar.width
 
             if x > Progress_bar.circle_x:
-                passed_seconds += (x - Progress_bar.circle_x) / width * math.floor(self.duration())
+                passed_seconds += (x - Progress_bar.circle_x) / width * self.duration()
             else:
-                passed_seconds -= (Progress_bar.circle_x - x) / width * math.ceil(self.duration())
+                passed_seconds -= (Progress_bar.circle_x - x) / width * self.duration()
             if pygame.mixer.music.get_pos() > 0:
                 pygame.mixer.music.set_pos(passed_seconds)
 
@@ -357,18 +362,56 @@ class Progress_bar:
         global passed_seconds
         if not pause:
             passed_seconds += 1 / FPS
-        if is_replayed or is_song_skipped:
+        if is_replayed or is_song_skipped or not Song.is_playing:
             passed_seconds = 0
 
         Progress_bar.circle_x = Progress_bar.x + Progress_bar.width * passed_seconds / self.duration()
-        pygame.draw.line(win, GREEN, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 5)
-        pygame.draw.line(win, BLACK, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 3)
+        pygame.draw.line(win, GREEN, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 3)
+        pygame.draw.line(win, BLACK, (Progress_bar.x, Progress_bar.line_y), (Progress_bar.x + Progress_bar.width, Progress_bar.line_y), 1)
         
         if pygame.mixer.music.get_pos() < 0 or Progress_bar.circle_x >= Progress_bar.x + Progress_bar.width:
             Progress_bar.circle_x = Progress_bar.x
             
         pygame.draw.circle(win, DARK_GREEN, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious)
         pygame.draw.circle(win, GREEN, (Progress_bar.circle_x, Progress_bar.line_y), Progress_bar.circle_radious, 1)
+
+        #if pygame.mixer.music.get_busy():
+        #if Song.is_playing:
+        minutes = int(passed_seconds // 60)
+        seconds = int(passed_seconds % 60)
+        if minutes >= 10:
+            string_munites = str(minutes)
+        else:
+            string_munites = f"0{minutes}"
+
+        if seconds >= 10:
+            string_seconds = str(seconds)
+        else:
+            string_seconds = f"0{seconds}"
+        time_string = f"{string_munites}:{string_seconds}"
+        passed_seconds_message = font.render(time_string, True, WHITE)
+        #else:
+        #    passed_seconds_message = font.render("00:00", True, WHITE)
+
+        #if Song.is_playing:
+        lenght_minutes = int(self.duration() // 60)
+        lenght_seconds = int(self.duration() % 60)
+        if lenght_minutes >= 10:
+            lenght_minutes = str(lenght_minutes)
+        else:
+            lenght_minutes = f"0{lenght_minutes}"
+        if lenght_seconds >= 10:
+            lenght_seconds = str(lenght_seconds)
+        else:
+            lenght_seconds = f"0{lenght_seconds}"
+        lenght_message = f"{lenght_minutes}:{lenght_seconds}"
+        song_lenght = font.render(lenght_message, True, WHITE)
+        #else:
+        #    song_lenght = font.render("00:00", True, WHITE)
+
+        win.blit(passed_seconds_message, (LOOP_BUTTON_X - GAP - passed_seconds_message.get_width(), toolbar_button_y_position(passed_seconds_message.get_height())))
+        win.blit(song_lenght, (FORWARD_BUTTON_X + FORWARD_BUTTON_SIZE + GAP, toolbar_button_y_position(passed_seconds_message.get_height())))
+
 
 songs = []
 for i in range(len(list_of_files)):
