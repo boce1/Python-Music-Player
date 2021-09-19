@@ -383,6 +383,11 @@ class Progress_bar:
                 string_seconds = str(seconds)
             else:
                 string_seconds = f"0{seconds}"
+
+            if passed_seconds > self.duration():
+                string_munites = "00"
+                string_seconds = "00"
+                
             time_string = f"{string_munites}:{string_seconds}"
             passed_seconds_message = font.render(time_string, True, WHITE)
         else:
@@ -403,6 +408,7 @@ class Progress_bar:
             song_lenght = font.render(lenght_message, True, WHITE)
         else:
             song_lenght = font.render("00:00", True, WHITE)
+
 
         win.blit(passed_seconds_message, (LOOP_BUTTON_X - GAP - passed_seconds_message.get_width(), toolbar_button_y_position(passed_seconds_message.get_height())))
         win.blit(song_lenght, (FORWARD_BUTTON_X + FORWARD_BUTTON_SIZE + GAP, toolbar_button_y_position(passed_seconds_message.get_height())))
