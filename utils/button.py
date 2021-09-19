@@ -41,3 +41,6 @@ class Button:
 
     def is_key_pressed(self, event, key):
         return event.type == pygame.KEYDOWN and event.key == key
+
+    def is_key_relised(self, event, key):
+        return event.type == pygame.KEYUP and event.key == key        

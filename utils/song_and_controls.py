@@ -118,7 +118,9 @@ playing_song_left = True
 playing_song_x_ = SONGS_X
 def show_playing_song(win):
     global playing_song_left, playing_song_x_
-    text = font.render(str(list_of_files[song_index].split(".mp3")[0]), True, BLACK)
+    if is_song_index_bigger_than_0():
+        text = font.render(str(list_of_files[song_index].split(".mp3")[0]), True, BLACK)
+
     pygame.draw.rect(win, WHITE, (0, SONG_PLALYING_TEXT, WIDTH, SONG_PLALYING_TEXT_HEIGHT))
     if not start:
         if SONGS_X + text.get_width() < WIDTH:
@@ -242,21 +244,22 @@ class Forward_button(Button):
     def forward(self, mouse_pos, event, song_list):
         global song_index, pause, start, is_song_skipped 
         if self.is_ready(mouse_pos, event) or self.is_key_pressed(event, pygame.K_f):
-            song_index += 1
-            if song_index >= len(song_list):
-                song_index = 0
+            if not start:
+                song_index += 1
+                if song_index >= len(song_list):
+                    song_index = 0
 
-            if not pygame.mixer.music.get_busy() and pause:
-                pause = not pause
+                if not pygame.mixer.music.get_busy() and pause:
+                    pause = not pause
 
-            start = False
-            is_song_skipped = True
+                start = False
+                is_song_skipped = True
 
-            if is_song_index_bigger_than_0():
-                pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
-                pygame.mixer.music.play()
+                if is_song_index_bigger_than_0():
+                    pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+                    pygame.mixer.music.play()
 
-        if self.is_relised(mouse_pos, event):
+        if self.is_relised(mouse_pos, event) or self.is_key_relised(event, pygame.K_f):
             is_song_skipped = False
 
     def draw_sign(self, win):
@@ -267,21 +270,22 @@ class Backward_button(Button):
     def backward(self, mouse_pos, event, song_list):
         global song_index, pause, start, is_song_skipped
         if self.is_ready(mouse_pos, event) or self.is_key_pressed(event, pygame.K_b):
-            song_index -= 1
-            if song_index <= 0:
-                song_index = len(song_list) - 1
+            if not start:
+                song_index -= 1
+                if song_index <= 0:
+                    song_index = len(song_list) - 1
 
-            if not pygame.mixer.music.get_busy() and pause:
-                pause = not pause
+                if not pygame.mixer.music.get_busy() and pause:
+                    pause = not pause
 
-            start = False
-            is_song_skipped = True
+                start = False
+                is_song_skipped = True
 
-            if is_song_index_bigger_than_0():
-                pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
-                pygame.mixer.music.play()
+                if is_song_index_bigger_than_0():
+                    pygame.mixer.music.load(f"{path}\\{song_list[song_index]}")
+                    pygame.mixer.music.play()
 
-        if self.is_relised(mouse_pos, event):
+        if self.is_relised(mouse_pos, event) or self.is_key_relised(event, pygame.K_b):
             is_song_skipped = False
 
     def draw_sign(self, win):
